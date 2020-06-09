@@ -1,5 +1,6 @@
 import editor.TextEditor;
 import org.assertj.swing.fixture.JButtonFixture;
+import org.assertj.swing.fixture.JMenuItemFixture;
 import org.assertj.swing.fixture.JScrollPaneFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.hyperskill.hstest.v6.stage.SwingTest;
@@ -38,6 +39,10 @@ public class EditorTest extends SwingTest<TestClue> {
     private JButtonFixture saveButton;
     private JButtonFixture loadButton;
     private JScrollPaneFixture scrollPane;
+    private JMenuItemFixture menuFile;
+    private JMenuItemFixture menuLoad;
+    private JMenuItemFixture menuSave;
+    private JMenuItemFixture menuExit;
 
     String filename1 = "SomeFile.txt";
     String filename2 = "AnotherFile.txt";
@@ -132,6 +137,35 @@ public class EditorTest extends SwingTest<TestClue> {
                     scrollPane = window.scrollPane("ScrollPane");
                     return scrollPane;
                 }))),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "There is no menu option with name MenuFile",
+                () -> checkExistence(() -> {
+                    menuFile = window.menuItem("MenuFile");
+                    return menuFile;
+                }))),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "There is no menu option with name MenuLoad",
+                () -> checkExistence(() -> {
+                    menuLoad = window.menuItem("MenuLoad");
+                    return menuLoad;
+                }))),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "There is no menu option with name MenuSave",
+                () -> checkExistence(() -> {
+                    menuSave = window.menuItem("MenuSave");
+                    return menuSave;
+                }))),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "There is no menu option with name MenuExit",
+                () -> checkExistence(() -> {
+                    menuExit = window.menuItem("MenuExit");
+                    return menuExit;
+                }))),
+
 
 
             // logic tests
@@ -296,6 +330,152 @@ public class EditorTest extends SwingTest<TestClue> {
                     loadButton.click();
                     textArea.requireText("");
 
+                    return true;
+                })),
+
+
+
+            // menu-related tests
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "MenuLoad should be enabled for clicking",
+                () -> {
+                    menuLoad.requireEnabled();
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "MenuSave should be enabled for clicking",
+                () -> {
+                    menuSave.requireEnabled();
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "MenuFile should be enabled for clicking",
+                () -> {
+                    menuFile.requireEnabled();
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "MenuExit should be enabled for clicking",
+                () -> {
+                    menuExit.requireEnabled();
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "Text in FilenameField and in TextArea " +
+                    "should stay the same after saving file using MenuSave",
+                () -> {
+                    filenameField.setText(filename1);
+                    textArea.setText(textToSave1);
+
+                    menuSave.click();
+
+                    filenameField.requireText(filename1);
+                    textArea.requireText(textToSave1);
+
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "Text in FilenameField and in TextArea " +
+                    "should stay the same after saving file using MenuSave",
+                () -> {
+                    String text = textToSave2;
+                    String file = filename2;
+
+                    filenameField.setText(file);
+                    textArea.setText(text);
+
+                    menuSave.click();
+
+                    filenameField.requireText(file);
+                    textArea.requireText(text);
+
+                    filenameField.setText("");
+                    textArea.setText("");
+
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "Text in FilenameField stay " +
+                    "the same after loading file using MenuLoad",
+                () -> {
+                    String file = filename1;
+
+                    filenameField.setText(file);
+                    textArea.setText("");
+
+                    menuLoad.click();
+
+                    filenameField.requireText(file);
+
+                    filenameField.setText("");
+                    textArea.setText("");
+
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "Text should be the same after saving " +
+                    "and loading same file using MenuLoad",
+                () -> {
+                    String[] texts = {textToSave2, textToSave1};
+                    String[] files = {filename1, filename2};
+
+                    for (int i = 0; i < 2; i++) {
+
+                        String text = texts[i];
+                        String file = files[i];
+
+                        filenameField.setText("");
+                        textArea.setText("");
+
+                        filenameField.setText(file);
+                        textArea.setText(text);
+
+                        menuSave.click();
+
+                        filenameField.setText("");
+                        textArea.setText("");
+
+                        filenameField.setText(file);
+                        menuLoad.click();
+
+                        textArea.requireText(text);
+                    }
+
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "TextArea should be empty if user tries to " +
+                    "load file that doesn't exist using MenuLoad",
+                () -> {
+
+                    textArea.setText(textToSave1);
+                    filenameField.setText(noExistFile);
+
+                    menuLoad.click();
+                    textArea.requireText("");
+
+                    return true;
+                })),
+
+            new TestCase<TestClue>().setAttach(new TestClue(
+                "TextArea should correctly save and load an empty file using menu",
+                () -> {
+                    textArea.setText("");
+                    filenameField.setText(filename1);
+
+                    menuSave.click();
+                    textArea.setText(textToSave2);
+                    menuLoad.click();
+                    textArea.requireText("");
                     return true;
                 }))
         );

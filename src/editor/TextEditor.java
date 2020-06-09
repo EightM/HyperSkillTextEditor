@@ -1,9 +1,15 @@
 package editor;
 
+import editor.listeners.LoadListener;
+import editor.listeners.SaveListener;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,39 +43,45 @@ public class TextEditor extends JFrame {
 
         JButton saveButton = new JButton("Save");
         saveButton.setName("SaveButton");
-        saveButton.addActionListener(e -> {
-            Path newFile = Paths.get(fileName.getText());
-            byte[] data = mainEditor.getText().getBytes();
-            try (OutputStream out = new BufferedOutputStream(
-                    Files.newOutputStream(newFile, CREATE, TRUNCATE_EXISTING)
-            )){
-                out.write(data, 0, data.length);
-            }
-            catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
+        saveButton.addActionListener(new SaveListener(mainEditor, fileName));
 
         JButton loadButton = new JButton("Load");
         loadButton.setName("LoadButton");
-        loadButton.addActionListener(e -> {
-            mainEditor.setText(null);
-            String name = fileName.getText();
-            if (!name.isEmpty()) {
-                Path path = Paths.get(name);
-                try {
-                    String content = new String(Files.readAllBytes(path));
-                    mainEditor.setText(content);
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
-        });
+        loadButton.addActionListener(new LoadListener(mainEditor, fileName));
 
         topPanel.add(fileName);
         topPanel.add(saveButton);
         topPanel.add(loadButton);
         topPanel.setVisible(true);
         add(topPanel, BorderLayout.NORTH);
+
+        setJMenuBar(createMenuBar(mainEditor, fileName));
+
+    }
+
+    private JMenuBar createMenuBar(JTextArea mainEditor, JTextField fileName) {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        fileMenu.setName("MenuFile");
+
+        JMenuItem saveMenuItem = new JMenuItem("Save");
+        saveMenuItem.setName("MenuSave");
+        JMenuItem loadMenuItem = new JMenuItem("Load");
+        loadMenuItem.setName("MenuLoad");
+        JMenuItem exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.setName("MenuExit");
+
+        saveMenuItem.addActionListener(new SaveListener(mainEditor, fileName));
+        loadMenuItem.addActionListener(new LoadListener(mainEditor, fileName));
+        exitMenuItem.addActionListener(actionEvent -> dispose());
+
+        fileMenu.add(saveMenuItem);
+        fileMenu.add(loadMenuItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+        return menuBar;
     }
 }

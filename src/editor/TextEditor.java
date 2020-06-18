@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 public class TextEditor extends JFrame {
     public TextEditor() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(450, 400);
+        setSize(650, 650);
         setTitle("Text editor");
         initComponents();
         setVisible(true);
@@ -25,7 +25,7 @@ public class TextEditor extends JFrame {
         add(jScrollPane);
 
         JPanel topPanel = new JPanel();
-        JTextField fileName = new JTextField(15);
+        JTextField fileName = new JTextField(10);
         fileName.setName("FilenameField");
 
         JButton saveButton = new JButton(new ImageIcon("./save.png"));
@@ -36,8 +36,19 @@ public class TextEditor extends JFrame {
         loadButton.setName("LoadButton");
         loadButton.addActionListener(new LoadListener(mainEditor, fileName));
 
+        JTextField searchField = new JTextField(15);
+
+        JButton searchButton = new JButton(new ImageIcon("./search.png"));
+        JButton previousResultButton = new JButton(new ImageIcon("./arrow_left.png"));
+        JButton nextResultButton = new JButton(new ImageIcon("./arrow_right.png"));
+
+
         topPanel.add(saveButton);
         topPanel.add(loadButton);
+        topPanel.add(searchField);
+        topPanel.add(searchButton);
+        topPanel.add(previousResultButton);
+        topPanel.add(nextResultButton);
         topPanel.setVisible(true);
         add(topPanel, BorderLayout.NORTH);
 

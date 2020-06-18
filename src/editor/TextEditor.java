@@ -4,21 +4,8 @@ import editor.listeners.LoadListener;
 import editor.listeners.SaveListener;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static java.nio.file.StandardOpenOption.*;
 
 public class TextEditor extends JFrame {
     public TextEditor() {
@@ -41,15 +28,14 @@ public class TextEditor extends JFrame {
         JTextField fileName = new JTextField(15);
         fileName.setName("FilenameField");
 
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton(new ImageIcon("./save.png"));
         saveButton.setName("SaveButton");
         saveButton.addActionListener(new SaveListener(mainEditor, fileName));
 
-        JButton loadButton = new JButton("Load");
+        JButton loadButton = new JButton(new ImageIcon("./open.png"));
         loadButton.setName("LoadButton");
         loadButton.addActionListener(new LoadListener(mainEditor, fileName));
 
-        topPanel.add(fileName);
         topPanel.add(saveButton);
         topPanel.add(loadButton);
         topPanel.setVisible(true);

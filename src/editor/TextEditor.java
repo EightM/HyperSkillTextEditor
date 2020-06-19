@@ -2,6 +2,7 @@ package editor;
 
 import editor.listeners.LoadListener;
 import editor.listeners.SaveListener;
+import editor.listeners.SearchListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,10 +39,11 @@ public class TextEditor extends JFrame {
 
         JTextField searchField = new JTextField(15);
 
+        JCheckBox useRegex = new JCheckBox("Use regex");
         JButton searchButton = new JButton(new ImageIcon("./search.png"));
+        searchButton.addActionListener(new SearchListener(mainEditor, searchField, useRegex));
         JButton previousResultButton = new JButton(new ImageIcon("./arrow_left.png"));
         JButton nextResultButton = new JButton(new ImageIcon("./arrow_right.png"));
-
 
         topPanel.add(saveButton);
         topPanel.add(loadButton);
@@ -49,6 +51,7 @@ public class TextEditor extends JFrame {
         topPanel.add(searchButton);
         topPanel.add(previousResultButton);
         topPanel.add(nextResultButton);
+        topPanel.add(useRegex);
         topPanel.setVisible(true);
         add(topPanel, BorderLayout.NORTH);
 

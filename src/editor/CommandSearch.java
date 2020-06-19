@@ -27,30 +27,37 @@ public class CommandSearch implements Command {
 
     @Override
     public void execute() {
-        class SearchWorker extends SwingWorker<Integer, Object> {
+        class SearchWorker extends SwingWorker<SearchResult, Object> {
 
             @Override
-            protected Integer doInBackground() throws Exception {
+            protected SearchResult doInBackground() {
                 if (useRegex) {
                     Pattern searchPattern = Pattern.compile(searchText);
                     Matcher matcher = searchPattern.matcher(mainEditor.getText());
                     boolean founded = matcher.find(beginIndex);
                     if (founded) {
-                        return matcher.start();
+                        return new SearchResult(matcher.start(), matcher.group());
                     }
                 } else {
-                    return mainEditor.getText().indexOf(searchText, beginIndex);
+                    int index = mainEditor.getText().indexOf(searchText, beginIndex);
+                    return new SearchResult(index, searchText);
                 }
 
-                return 0;
+                return null;
             }
 
             @Override
             protected void done() {
                 try {
-                    int index = get();
-                    mainEditor.setCaretPosition(index + searchText.length());
-                    mainEditor.select(index, index + searchText.length());
+                    SearchResult searchResult = get();
+
+                    if (searchResult == null) {
+                        return;
+                    }
+
+                    mainEditor.setCaretPosition(searchResult.getIndex() + searchResult.getFoundText().length());
+                    mainEditor.select(searchResult.getIndex(),
+                            searchResult.getIndex() + searchResult.getFoundText().length());
                     mainEditor.grabFocus();
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 public class TextEditor extends JFrame {
     public TextEditor() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(650, 650);
+        setSize(750, 650);
         setTitle("Text editor");
         initComponents();
         setVisible(true);

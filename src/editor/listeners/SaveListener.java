@@ -17,23 +17,28 @@ public class SaveListener implements ActionListener {
 
     private final JTextArea mainEditor;
     private final JTextField fileName;
+    private final JFileChooser jFileChooser;
 
-    public SaveListener(JTextArea mainEditor, JTextField filename) {
+    public SaveListener(JTextArea mainEditor, JTextField filename, JFileChooser jFileChooser) {
         this.mainEditor = mainEditor;
         this.fileName = filename;
+        this.jFileChooser = jFileChooser;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        Path newFile = Paths.get(fileName.getText());
-        byte[] data = mainEditor.getText().getBytes();
-        try (OutputStream out = new BufferedOutputStream(
-                Files.newOutputStream(newFile, CREATE, TRUNCATE_EXISTING)
-        )){
-            out.write(data, 0, data.length);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
+        int returnValue = jFileChooser.showSaveDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            Path newFile = Paths.get(jFileChooser.getSelectedFile().getAbsolutePath());
+            byte[] data = mainEditor.getText().getBytes();
+            try (OutputStream out = new BufferedOutputStream(
+                    Files.newOutputStream(newFile, CREATE, TRUNCATE_EXISTING)
+            )) {
+                out.write(data, 0, data.length);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

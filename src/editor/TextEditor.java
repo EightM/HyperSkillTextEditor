@@ -6,10 +6,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TextEditor extends JFrame {
 
-    private final SearchHistory searchHistory = new SearchHistory();
+    private final List<SearchResult> searchHistory = new LinkedList<>();
+
 
     public TextEditor() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,7 +33,7 @@ public class TextEditor extends JFrame {
         JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
         jFileChooser.setName("FileChooser");
         jFileChooser.setVisible(true);
-        add(jFileChooser);
+        //add(jFileChooser);
 
         JPanel topPanel = new JPanel();
         JTextField fileName = new JTextField(10);
@@ -60,7 +63,7 @@ public class TextEditor extends JFrame {
 
         JButton nextResultButton = new JButton(new ImageIcon("./arrow_right.png"));
         nextResultButton.setName("NextMatchButton");
-        nextResultButton.addActionListener(new NextSearchListener(mainEditor, searchField, searchHistory, useRegex));
+        nextResultButton.addActionListener(new NextSearchListener(mainEditor, searchHistory));
 
         topPanel.add(saveButton);
         topPanel.add(loadButton);
@@ -106,8 +109,8 @@ public class TextEditor extends JFrame {
         exitMenuItem.addActionListener(actionEvent -> dispose());
 
         startSearch.addActionListener(new SearchListener(mainEditor, searchField, searchHistory, useRegex));
-        nextMatch.addActionListener(new NextSearchListener(mainEditor, searchField, searchHistory, useRegex));
-        previousMatch.addActionListener(new NextSearchListener(mainEditor, searchField, searchHistory, useRegex));
+        nextMatch.addActionListener(new NextSearchListener(mainEditor, searchHistory));
+        previousMatch.addActionListener(new NextSearchListener(mainEditor, searchHistory));
         useRegexMenuItem.addActionListener(actionEvent -> useRegex.setSelected(!useRegex.isSelected()));
 
         fileMenu.add(saveMenuItem);

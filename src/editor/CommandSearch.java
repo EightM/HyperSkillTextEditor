@@ -10,19 +10,22 @@ public class CommandSearch implements Command {
     private final String searchText;
     private final boolean useRegex;
     private final int beginIndex;
+    private final SearchHistory searchHistory;
 
-    public CommandSearch(JTextArea mainEditor, String searchText, boolean useRegex) {
+    public CommandSearch(JTextArea mainEditor, String searchText, SearchHistory searchHistory, boolean useRegex) {
         this.mainEditor = mainEditor;
         this.searchText = searchText;
         this.useRegex = useRegex;
         this.beginIndex = 0;
+        this.searchHistory = searchHistory;
     }
 
-    public CommandSearch(JTextArea mainEditor, String searchText, int beginIndex, boolean useRegex) {
+    public CommandSearch(JTextArea mainEditor, String searchText, SearchHistory searchHistory, int beginIndex, boolean useRegex) {
         this.mainEditor = mainEditor;
         this.searchText = searchText;
         this.useRegex = useRegex;
         this.beginIndex = beginIndex;
+        this.searchHistory = searchHistory;
     }
 
     @Override
@@ -36,11 +39,20 @@ public class CommandSearch implements Command {
                     Matcher matcher = searchPattern.matcher(mainEditor.getText());
                     boolean founded = matcher.find(beginIndex);
                     if (founded) {
-                        return new SearchResult(matcher.start(), matcher.group());
+                        SearchResult searchResult = new SearchResult(matcher.start(), matcher.group());
+                        searchHistory.saveSearchResult(searchResult);
+                        return searchResult;
                     }
                 } else {
                     int index = mainEditor.getText().indexOf(searchText, beginIndex);
-                    return new SearchResult(index, searchText);
+
+                    if (index == -1) {
+                        return null;
+                    }
+
+                    SearchResult searchResult = new SearchResult(index, searchText);
+                    searchHistory.saveSearchResult(searchResult);
+                    return searchResult;
                 }
 
                 return null;

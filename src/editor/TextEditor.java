@@ -1,6 +1,7 @@
 package editor;
 
 import editor.listeners.LoadListener;
+import editor.listeners.NextSearchListener;
 import editor.listeners.SaveListener;
 import editor.listeners.SearchListener;
 
@@ -9,6 +10,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class TextEditor extends JFrame {
+
+    private final SearchHistory searchHistory = new SearchHistory();
+
     public TextEditor() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(750, 650);
@@ -41,9 +45,10 @@ public class TextEditor extends JFrame {
 
         JCheckBox useRegex = new JCheckBox("Use regex");
         JButton searchButton = new JButton(new ImageIcon("./search.png"));
-        searchButton.addActionListener(new SearchListener(mainEditor, searchField, useRegex));
+        searchButton.addActionListener(new SearchListener(mainEditor, searchField, searchHistory, useRegex));
         JButton previousResultButton = new JButton(new ImageIcon("./arrow_left.png"));
         JButton nextResultButton = new JButton(new ImageIcon("./arrow_right.png"));
+        nextResultButton.addActionListener(new NextSearchListener(mainEditor, searchField, searchHistory, useRegex));
 
         topPanel.add(saveButton);
         topPanel.add(loadButton);

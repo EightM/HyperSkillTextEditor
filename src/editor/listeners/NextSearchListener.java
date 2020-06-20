@@ -7,14 +7,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SearchListener implements ActionListener {
+public class NextSearchListener implements ActionListener {
 
     private final JTextArea mainEditor;
     private final JCheckBox useRegex;
     private final JTextField searchField;
-    private final SearchHistory searchHistory;
+    private final SearchHistory searchHistory;;
 
-    public SearchListener(JTextArea mainEditor, JTextField searchField, SearchHistory searchHistory, JCheckBox useRegex) {
+    public NextSearchListener(JTextArea mainEditor, JTextField searchField, SearchHistory searchHistory, JCheckBox useRegex) {
         this.mainEditor = mainEditor;
         this.useRegex = useRegex;
         this.searchField = searchField;
@@ -23,6 +23,7 @@ public class SearchListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        (new CommandSearch(mainEditor, searchField.getText(), searchHistory, useRegex.isSelected())).execute();
+        int beginIndex = mainEditor.getSelectionEnd();
+        (new CommandSearch(mainEditor, searchField.getText(), searchHistory, beginIndex, useRegex.isSelected())).execute();
     }
 }

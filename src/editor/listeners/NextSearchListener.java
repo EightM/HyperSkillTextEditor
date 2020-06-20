@@ -5,17 +5,18 @@ import editor.SearchResult;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class NextSearchListener implements ActionListener {
 
     private final JTextArea mainEditor;
-    private final LinkedList<SearchResult> searchHistory;
+    private final ArrayList<SearchResult> searchHistory;
 
     public NextSearchListener(JTextArea mainEditor, List<SearchResult> searchHistory) {
         this.mainEditor = mainEditor;
-        this.searchHistory = (LinkedList<SearchResult>) searchHistory;
+        this.searchHistory = (ArrayList<SearchResult>) searchHistory;
     }
 
     @Override

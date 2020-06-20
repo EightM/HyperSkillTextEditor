@@ -6,12 +6,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextEditor extends JFrame {
 
-    private final List<SearchResult> searchHistory = new LinkedList<>();
+    private final List<SearchResult> searchHistory = new ArrayList<>();
 
 
     public TextEditor() {
@@ -33,7 +33,6 @@ public class TextEditor extends JFrame {
         JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
         jFileChooser.setName("FileChooser");
         jFileChooser.setVisible(true);
-        //add(jFileChooser);
 
         JPanel topPanel = new JPanel();
         JTextField fileName = new JTextField(10);
@@ -110,7 +109,7 @@ public class TextEditor extends JFrame {
 
         startSearch.addActionListener(new SearchListener(mainEditor, searchField, searchHistory, useRegex));
         nextMatch.addActionListener(new NextSearchListener(mainEditor, searchHistory));
-        previousMatch.addActionListener(new NextSearchListener(mainEditor, searchHistory));
+        previousMatch.addActionListener(new BackSearhListener(mainEditor, searchHistory));
         useRegexMenuItem.addActionListener(actionEvent -> useRegex.setSelected(!useRegex.isSelected()));
 
         fileMenu.add(saveMenuItem);

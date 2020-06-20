@@ -2,7 +2,6 @@ package editor;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,23 +9,13 @@ public class CommandSearch implements Command {
 
     private final JTextArea mainEditor;
     private final String searchText;
-    private int beginIndex;
-    private List<SearchResult> searchHistory;
+    private final List<SearchResult> searchHistory;
 
     public CommandSearch(JTextArea mainEditor, String searchText, List<SearchResult> searchHistory) {
         this.mainEditor = mainEditor;
         this.searchText = searchText;
-        this.beginIndex = 0;
         this.searchHistory = searchHistory;
     }
-
-//    public CommandSearch(JTextArea mainEditor, String searchText, SearchHistory searchHistory, int beginIndex, boolean useRegex) {
-//        this.mainEditor = mainEditor;
-//        this.searchText = searchText;
-//        this.useRegex = useRegex;
-//        this.beginIndex = beginIndex;
-//        this.searchHistory = searchHistory;
-//    }
 
     @Override
     public void execute() {
@@ -42,7 +31,7 @@ public class CommandSearch implements Command {
         }
 
         private List<SearchResult> regexSearch() {
-
+            searchHistory.clear();
             Pattern searchPattern = Pattern.compile(searchText);
             Matcher matcher = searchPattern.matcher(mainEditor.getText());
             while (matcher.find()) {
@@ -52,29 +41,16 @@ public class CommandSearch implements Command {
             return searchHistory;
         }
 
-//        private SearchResult simpleSearch() {
-//            int index = mainEditor.getText().indexOf(searchText, beginIndex);
-//
-//            if (index == -1) {
-//                return null;
-//            }
-//            if (beginIndex != 0) {
-//                searchHistory.saveSearchResult(new SearchResult(mainEditor.getSelectionStart(), mainEditor.getSelectedText()));
-//            }
-//
-//            return new SearchResult(index, searchText);
-//        }
-
         @Override
         protected void done() {
             try {
-                List<SearchResult> searchHistory = get();
+                List<SearchResult> searchResultList = get();
 
-                if (searchHistory == null) {
+                if (searchResultList == null) {
                     return;
                 }
 
-                SearchResult searchResult = searchHistory.get(0);
+                SearchResult searchResult = searchResultList.get(0);
 
                 mainEditor.setCaretPosition(searchResult.getIndex() + searchResult.getFoundText().length());
                 mainEditor.select(searchResult.getIndex(),

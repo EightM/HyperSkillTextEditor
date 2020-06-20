@@ -30,54 +30,67 @@ public class CommandSearch implements Command {
 
     @Override
     public void execute() {
-        class SearchWorker extends SwingWorker<SearchResult, Object> {
+        SearchWorker searchWorker = new SearchWorker();
+        searchWorker.execute();
+    }
 
-            @Override
-            protected SearchResult doInBackground() {
-                if (useRegex) {
-                    Pattern searchPattern = Pattern.compile(searchText);
-                    Matcher matcher = searchPattern.matcher(mainEditor.getText());
-                    boolean founded = matcher.find(beginIndex);
-                    if (founded) {
-                        SearchResult searchResult = new SearchResult(matcher.start(), matcher.group());
-                        searchHistory.saveSearchResult(searchResult);
-                        return searchResult;
-                    }
-                } else {
-                    int index = mainEditor.getText().indexOf(searchText, beginIndex);
+    class SearchWorker extends SwingWorker<SearchResult, Object> {
 
-                    if (index == -1) {
-                        return null;
-                    }
-
-                    SearchResult searchResult = new SearchResult(index, searchText);
-                    searchHistory.saveSearchResult(searchResult);
-                    return searchResult;
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    SearchResult searchResult = get();
-
-                    if (searchResult == null) {
-                        return;
-                    }
-
-                    mainEditor.setCaretPosition(searchResult.getIndex() + searchResult.getFoundText().length());
-                    mainEditor.select(searchResult.getIndex(),
-                            searchResult.getIndex() + searchResult.getFoundText().length());
-                    mainEditor.grabFocus();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        @Override
+        protected SearchResult doInBackground() {
+            if (useRegex) {
+                return regexSearch();
+            } else {
+                return simpleSearch();
             }
         }
 
-        SearchWorker searchWorker = new SearchWorker();
-        searchWorker.execute();
+        private SearchResult regexSearch() {
+            Pattern searchPattern = Pattern.compile(searchText);
+            Matcher matcher = searchPattern.matcher(mainEditor.getText());
+            boolean founded = matcher.find(beginIndex);
+            if (founded) {
+                if (beginIndex != 0) {
+                    searchHistory.saveSearchResult(new SearchResult(mainEditor.getSelectionStart(), mainEditor.getSelectedText()));
+                }
+                SearchResult searchResult = new SearchResult(matcher.start(), matcher.group());
+
+                return searchResult;
+            }
+
+            return null;
+        }
+
+        private SearchResult simpleSearch() {
+            int index = mainEditor.getText().indexOf(searchText, beginIndex);
+
+            if (index == -1) {
+                return null;
+            }
+            if (beginIndex != 0) {
+                searchHistory.saveSearchResult(new SearchResult(mainEditor.getSelectionStart(), mainEditor.getSelectedText()));
+            }
+
+            SearchResult searchResult = new SearchResult(index, searchText);
+            return searchResult;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                SearchResult searchResult = get();
+
+                if (searchResult == null) {
+                    return;
+                }
+
+                mainEditor.setCaretPosition(searchResult.getIndex() + searchResult.getFoundText().length());
+                mainEditor.select(searchResult.getIndex(),
+                        searchResult.getIndex() + searchResult.getFoundText().length());
+                mainEditor.grabFocus();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

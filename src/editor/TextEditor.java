@@ -1,9 +1,6 @@
 package editor;
 
-import editor.listeners.LoadListener;
-import editor.listeners.NextSearchListener;
-import editor.listeners.SaveListener;
-import editor.listeners.SearchListener;
+import editor.listeners.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,16 +35,25 @@ public class TextEditor extends JFrame {
         saveButton.addActionListener(new SaveListener(mainEditor, fileName));
 
         JButton loadButton = new JButton(new ImageIcon("./open.png"));
-        loadButton.setName("LoadButton");
+        loadButton.setName("OpenButton");
         loadButton.addActionListener(new LoadListener(mainEditor, fileName));
 
         JTextField searchField = new JTextField(15);
+        searchField.setName("SearchField");
 
         JCheckBox useRegex = new JCheckBox("Use regex");
+        useRegex.setName("UseRegExCheckbox");
         JButton searchButton = new JButton(new ImageIcon("./search.png"));
+        searchButton.setName("StartSearchButton");
+
         searchButton.addActionListener(new SearchListener(mainEditor, searchField, searchHistory, useRegex));
+
         JButton previousResultButton = new JButton(new ImageIcon("./arrow_left.png"));
+        previousResultButton.addActionListener(new BackSearhListener(mainEditor, searchHistory));
+        previousResultButton.setName("PreviousMatchButton");
+
         JButton nextResultButton = new JButton(new ImageIcon("./arrow_right.png"));
+        nextResultButton.setName("NextMatchButton");
         nextResultButton.addActionListener(new NextSearchListener(mainEditor, searchField, searchHistory, useRegex));
 
         topPanel.add(saveButton);

@@ -22,6 +22,7 @@ public class LoadListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jFileChooser.setName("FileChooser");
         int returnValue = jFileChooser.showOpenDialog(null);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
